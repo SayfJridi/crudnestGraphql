@@ -22,8 +22,8 @@ export class PostsResolver {
   }
 
   @Mutation((_) => Post)
-  async updatePost(@Args('updatePostInput') updatePostInput: createPostInput) {
-    return await this.postsService.update(updatePostInput);
+  async updatePost(@Args('_id', { type: () => String }) _id: Types.ObjectId, @Args('updatePostInput') updatePostInput: createPostInput) {
+    return await this.postsService.update(_id, updatePostInput);
   }
 
   @Mutation((_) => Post)

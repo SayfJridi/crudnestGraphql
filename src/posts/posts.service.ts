@@ -20,7 +20,7 @@ export class PostsService {
   async get(): Promise<Post[]> {
     return await this.PostsModel.find();
   }
-  async update(updatePostInput: createPostInput): Promise<Post> {
-    return await this.PostsModel.findOneAndUpdate({ ...updatePostInput });
+  async update(_id:Types.ObjectId , updatePostInput: createPostInput): Promise<Post> {
+    return await this.PostsModel.findOneAndUpdate({_id},{ ...updatePostInput });
   }
 }
