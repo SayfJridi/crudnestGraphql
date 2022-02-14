@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 
@@ -7,6 +7,10 @@ import { Types } from 'mongoose';
 export class Post {
   @Field((_) => String)
   _id: Types.ObjectId;
+
+  @Field((_) => GraphQLISODateTime)
+  @Prop()
+  time: Date;
   @Field()
   @Prop()
   title: string;

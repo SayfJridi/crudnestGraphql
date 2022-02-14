@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class createPostInput {
@@ -6,4 +6,7 @@ export class createPostInput {
   title: string;
   @Field()
   content: string;
+
+  @Field((_) => GraphQLISODateTime)
+  time: Date;
 }
