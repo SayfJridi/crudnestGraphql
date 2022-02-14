@@ -17,22 +17,29 @@ describe('PostsResolver', () => {
       res._id = new Types.ObjectId('507f1f77bcf86cd799439011');
       res.content = createdto.content;
       res.title = createdto.title;
+      res.time = new Date('2022-02-14T13:41:10.061Z');
       return await res;
     }),
     get: jest.fn(async () => await []),
     getOne: jest.fn(
       async (_id: Types.ObjectId) =>
-        await { _id, title: 'qjwqj', content: 'cqwhwhqwehe' },
+        (await {
+          _id,
+          title: 'random found title',
+          content: 'random found content',
+          time: new Date('2022-02-14T13:41:10.061Z'),
+        }) as Post,
     ),
     update: jest.fn(
       async (_id, updateDto: createPostInput) => await { _id, ...updateDto },
     ),
     delete: jest.fn(async (_id: Types.ObjectId) => {
-      return await {
+      return (await {
         _id,
         content: 'random Deleted  content',
         title: 'random Deleted title',
-      }as Post;
+        time: new Date('2022-02-14T13:41:10.061Z'),
+      }) as Post;
     }),
   };
   beforeEach(async () => {
@@ -58,34 +65,54 @@ describe('PostsResolver', () => {
       await resolver.createPost({
         title: 'random title',
         content: 'random content',
+        time: new Date('2022-02-14T13:41:10.061Z'),
       }),
-    ).toEqual(mockres);
+    ).toEqual({
+      _id: expect.any(Types.ObjectId),
+      time: new Date('2022-02-14T13:41:10.061Z'),
+      title: expect.any(String),
+      content: expect.any(String),
+    });
   });
-  it('returns all posts', async () => {
-    expect(await resolver.posts()).toEqual([]);
+  it('returns all posts', () => {
+    expect(resolver.posts()).resolves.toEqual([]);
   });
 
-  it('returns all posts', async () => {
-    expect(await resolver.posts()).toEqual([]);
+  it('returns a single Post', () => {
+    const _id = new Types.ObjectId('507f1f77bcf86cd799439011');
+
+    expect(resolver.post(_id)).resolves.toEqual({
+      _id: expect.any(Types.ObjectId),
+      content: expect.any(String),
+      title: expect.any(String),
+      time: expect.any(Date),
+    });
   });
-  it('Should Return The Post Updated', async () => {
+  it('Should Return The Post Updated', () => {
     const mockinput = new createPostInput();
     const _id = new Types.ObjectId('507f1f77bcf86cd799439011');
     mockinput.content = 'random Updated content';
     mockinput.title = 'random Updated title';
+    mockinput.time = new Date('2022-02-14T13:41:10.061Z');
     expect(
-      await resolver.updatePost(_id, {
+      resolver.updatePost(_id, {
         ...mockinput,
       }),
-    ).toEqual({ _id, title: mockinput.title, content: mockinput.content });
+    ).resolves.toEqual({
+      _id,
+      title: mockinput.title,
+      content: mockinput.content,
+      time: new Date('2022-02-14T13:41:10.061Z'),
+    });
   });
-  it('Should Return The Post Delete', async () => {
+  it('Should Return The Post Delete', () => {
     const mock_id = new Types.ObjectId();
     const mockdeletedPost = new Post();
     mockdeletedPost._id = mock_id;
+    mockdeletedPost.time = new Date('2022-02-14T13:41:10.061Z');
     mockdeletedPost.content = 'random Deleted  content';
     mockdeletedPost.title = 'random Deleted title';
 
-    expect(await resolver.deletePost(mock_id)).toEqual(mockdeletedPost);
+    expect(resolver.deletePost(mock_id)).resolves.toEqual(mockdeletedPost);
   });
 });
